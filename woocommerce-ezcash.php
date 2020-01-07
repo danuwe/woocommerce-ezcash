@@ -227,10 +227,10 @@ function mj_wc_ezcash_init()
                 $order_id = absint(get_query_var('order-pay'));
                 $order = wc_get_order($order_id);
 
-                if ($order->id == $order_id && $order->order_key == $order_key) {
+                if ($order->get_id() == $order_id && $order->get_order_key() == $order_key) {
                     $mcode = $this->merchant_code;
                     $tid = $order_id . '_' . rand();
-                    $tamount = $order->order_total;
+                    $tamount = $order->get_total();
                     $rurl = $this->notify_url;
                     $sensitiveData = $mcode . '|' . $tid . '|' . $tamount . '|' . $rurl;
                     $publicKey = $this->public_key;
@@ -289,7 +289,6 @@ function mj_wc_ezcash_init()
                             $order->update_status('on-hold', '');
                             add_post_meta($order_id, '_transaction_id', $transaction_id, true);
                             $order->add_order_note('Look into this order. This order is currently on hold. Reason: Amount paid is less than the order amount. Amount Paid was Rs ' . $transaction_amount . ' while the order amount is Rs ' . $order_total . '.');
-                            $order->reduce_order_stock();
                             $notice = __('Thank you for shopping with us. The payment was successful, but the amount paid is not the same as the order amount. Your order is currently on-hold. Kindly contact us for more information regarding your order and payment status.', 'woothemes');
                             wc_add_notice($notice, 'notice');
                         } else {
